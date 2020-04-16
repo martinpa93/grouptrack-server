@@ -6,8 +6,8 @@ var config = require('./config/config');
 var app = express();
 
 
-app.use(bodyParser.urlencoded({ extended: false, limit: '50mb' }))
-app.use(bodyParser.json({ limit: '50mb'}));
+app.use(bodyParser.urlencoded({ extended: false, limit: '10mb' }))
+app.use(bodyParser.json({ limit: '10mb'}));
 app.use(passport.initialize());
 var passportMiddleware = require('./middleware/passport.js');
 passport.use(passportMiddleware);
