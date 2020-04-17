@@ -37,7 +37,7 @@ io.sockets
         if (query) {
           const isJoiner = query.joiners.findIndex(el => el === user.email) > -1 ? true: false;
           const isJoinerOrAdmin = isJoiner || query.admin === user.email;
-          if (!isJoinerOrAdmin) {
+          if (!isJoinerOrAdmin || isUserInRoom(socket, user)) {
             socket.emit('socket unavailable');
             return;
           }
@@ -134,13 +134,20 @@ io.sockets
           console.log('emit')
           if (userIdx > -1) { usersRooms[roomIdx].users.splice(userIdx, 1); }
           io.sockets.in(socket.room).emit('joiners', usersRooms[roomIdx].users);
-          if (userIdx === 0) { usersRooms.splice(roomIdx, 1); }
-        } else {
-          usersRooms.splice(roomIdx);
+          if (usersRooms[roomIdx].users.length === 0) { usersRooms.splice(roomIdx, 1); } 
         }
       }
     }
     console.log(usersRooms);
+  }
+
+  function isUserInRoom(socket, user) {
+    if (usersRooms.length > 0) {
+      const roomIdx = usersRooms.findIndex((el) => el.room === socket.room);
+      if (roomIdx === -1) { return false; }
+      return usersRooms[roomIdx].users.find(el => el === user.email);
+    }
+    return false;
   }
 
   function onJoin(socket, query) {
