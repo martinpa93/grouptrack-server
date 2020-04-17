@@ -112,30 +112,35 @@ io.sockets
   function controlUsersCon(socket, user) {
     if (usersRooms.length > 0 && usersRooms.findIndex((el) => el.roomId === socket.room) > -1) {
       idxRoom = usersRooms.findIndex((el) => el.roomId === socket.room);
-      if (usersRooms[idxRoom].users && usersRooms[idxRoom].users.length > 0 && usersRooms[idxRoom].users.findIndex((el) => el === user.email === -1) ) {
+      if (usersRooms[idxRoom].users.length > 0 && usersRooms[idxRoom].users.findIndex((el) => el === user.email) === -1) {
         let idxUser = usersRooms[idxRoom].users.findIndex((el) => el === user.email);
         if (idxUser === -1) { usersRooms[idxRoom].users.push(user.email); }
         io.sockets.in(socket.room).emit('joiners', usersRooms[idxRoom].users);
-      } 
+      }
     } else {
       usersRooms.push({roomId: socket.room, users: [user.email]}); 
       io.sockets.in(socket.room).emit('joiners', usersRooms[usersRooms.length-1].users);
     }
+    console.log(usersRooms);
   }
 
   function controlUsersDes(socket, user) {
-    let idxRoom = usersRooms.findIndex((el) => el.roomId === socket.room);
-    if (idxRoom === -1) { return; }
-    let idxUser = usersRooms[idxRoom].users.findIndex((el) => el === user.email);
-    if (usersRooms[idxRoom].users.length === 1 && idxUser === 0) {
-      usersRooms.splice(idxRoom, 1);
-      io.sockets.in(socket.room).emit('joiners', []);
-      console.log(usersRooms);
-    } else {
-      usersRooms[idxRoom].users.splice(idxUser, 1);
-      io.sockets.in(socket.room).emit('joiners', usersRooms[idxRoom].users);
-      console.log(usersRooms[idxRoom].users);
+    if (usersRooms.length > 0){
+      const roomIdx = usersRooms.findIndex((el) => el.roomId === socket.room);
+      if(roomIdx === -1 ) { console.log(usersRooms); return; }
+      else {
+        if (usersRooms[roomIdx].users && usersRooms[roomIdx].users.length > 0) {
+          const userIdx = usersRooms[roomIdx].users.findIndex(el => el === user.email);
+          console.log('emit')
+          if (userIdx > -1) { usersRooms[roomIdx].users.splice(userIdx, 1); }
+          io.sockets.in(socket.room).emit('joiners', usersRooms[roomIdx].users);
+          if (userIdx === 0) { usersRooms.splice(roomIdx, 1); }
+        } else {
+          usersRooms.splice(roomIdx);
+        }
+      }
     }
+    console.log(usersRooms);
   }
 
   function onJoin(socket, query) {

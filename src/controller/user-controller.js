@@ -70,7 +70,7 @@ exports.uploadImageUser = (req, res) => {
   let imageBuffer = decodedImg.data;
   try {
     fs.writeFileSync('./files/avatars/' + req.user.email, imageBuffer, 'base64');
-    return res.send({status: 'success'});
+    return res.status(200).json({status: 'success'});
   } catch (e) {
     return res.status(400).json({status: 'failed'});
   }
