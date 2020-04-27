@@ -93,6 +93,7 @@ io.sockets
     });
   
     socket.on('destiny', (destiny) => {
+      console.log(socket);
       if (!destiny || !destiny.destiny) { }
       Room.findByIdAndUpdate(destiny.roomId, {destiny: destiny.destiny, destLng: destiny.destLng, destLat: destiny.destLat, arrivals: []}, {new: true}, (err, query) => {
         if (err) { console.log(err); }

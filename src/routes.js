@@ -39,9 +39,6 @@ var express = require('express'),
     routes.delete('/room/:roomId', passport.authenticate('jwt', { session: false }), (req, res) => {
       roomController.deleteRoom(req, res);
     });
-    routes.get('/locations/:roomId', passport.authenticate('jwt', { session: false }), (req, res) => {
-      locationController.getLocations(req, res);
-    }); 
     routes.get('/userLocations/:roomId', passport.authenticate('jwt', { session: false }), (req, res) => {
       locationController.getUserLocations(req, res);
     }); 
